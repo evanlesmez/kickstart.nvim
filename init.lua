@@ -922,5 +922,19 @@ require('lazy').setup({
   },
 })
 
+vim.opt['tabstop'] = 4
+vim.opt['softtabstop'] = 4
+vim.opt['shiftwidth'] = 4
+vim.opt['expandtab'] = true
+
+vim.api.nvim_create_autocmd('BufEnter', {
+  pattern = '*.gd',
+  callback = function()
+    vim.bo.tabstop = 4
+    vim.bo.softtabstop = 4
+    vim.bo.shiftwidth = 4
+    vim.bo.expandtab = true
+  end,
+})
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
