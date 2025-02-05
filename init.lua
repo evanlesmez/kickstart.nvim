@@ -912,6 +912,17 @@ require('lazy').setup({
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
   -- { import = 'custom.plugins' },
+
+  {
+    'stevearc/oil.nvim', ---@module 'oil'
+    ---@type oil.SetupOpts
+    opts = {},
+    -- Optional dependencies
+    dependencies = { { 'echasnovski/mini.icons', opts = {} } },
+    -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+    -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
+    lazy = false,
+  },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
@@ -933,6 +944,38 @@ require('lazy').setup({
     },
   },
 })
+
+require('oil').setup {
+  default_file_explorer = true,
+  columns = {
+    'icon',
+    --    'permissions',
+    'size',
+    -- 'mtime',
+  },
+}
+vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+
+require('dap').adapters['pwa-node'] = {
+  type = 'server',
+  host = 'localhost',
+  port = '${port}',
+  executable = {
+    command = 'node',
+    -- 💀 Make sure to update this path to point to your installation
+    args = { './debug-adapters/js-debug/js-debug/src/dapDebugServer.js', '${port}' },
+  },
+}
+
+require('dap').configurations.javascript = {
+  {
+    type = 'pwa-node',
+    request = 'launch',
+    name = 'Launch file',
+    program = '${file}',
+    cwd = '${workspaceFolder}',
+  },
+}
 
 vim.opt['tabstop'] = 4
 vim.opt['softtabstop'] = 4
