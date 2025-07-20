@@ -592,7 +592,20 @@ require('lazy').setup({
                 callSnippet = 'Replace',
               },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+              diagnostics = {
+                globals = {
+                  'vim',
+                  'love',
+                },
+              },
               -- diagnostics = { disable = { 'missing-fields' } },
+              workspace = {
+                library = {
+                  [vim.fn.expand '$VIMRUNTIME/lua'] = true,
+                  [vim.fn.expand '$VIMRUNTIME/lua/vim/lsp'] = true,
+                  ['${3rd}/love2d/library'] = true, -- Add Love2D library
+                },
+              },
             },
           },
         },
@@ -922,6 +935,20 @@ require('lazy').setup({
     -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
     -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
     lazy = false,
+  },
+  {
+    'ray-x/go.nvim',
+    dependencies = { -- optional packages
+      'ray-x/guihua.lua',
+      'neovim/nvim-lspconfig',
+      'nvim-treesitter/nvim-treesitter',
+    },
+    config = function()
+      require('go').setup()
+    end,
+    event = { 'CmdlineEnter' },
+    ft = { 'go', 'gomod' },
+    build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
   },
 }, {
   ui = {
