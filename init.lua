@@ -1,13 +1,5 @@
 --[[
-    If you don't know anything about Lua, I recommend taking some time to read through
-    a guide. One possible example which will only take 10-15 minutes:
-      - https://learnxinyminutes.com/docs/lua/
-
-    After understanding a bit more about Lua, you can use `:help lua-guide` as a
-    reference for how Neovim integrates Lua.
-    - :help lua-guide
-    - (or HTML version): https://neovim.io/doc/user/lua-guide.html
-
+  kickstart nvim
   Run AND READ `:help`.
     This will open up a help window with some basic information
     about reading, navigating and searching the builtin help documentation.
@@ -29,6 +21,9 @@
     for when you are first encountering a few different constructs in your Neovim config.
 
 If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
+
+I hope you enjoy your Neovim journey,
+- TJ
 --]]
 
 -- Set <space> as the leader key
@@ -46,7 +41,6 @@ vim.g.have_nerd_font = true
 --  For more options, you can see `:help option-list`
 
 vim.opt.number = true
-
 vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
@@ -54,6 +48,14 @@ vim.opt.mouse = 'a'
 
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
+
+-- Sync clipboard between OS and Neovim.
+--  Schedule the setting after `UiEnter` because it can increase startup-time.
+--  Remove this option if you want your OS clipboard to remain independent.
+--  See `:help 'clipboard'`
+vim.schedule(function()
+  --  vim.opt.clipboard = 'unnamedplus'
+end)
 
 -- Enable break indent
 vim.opt.breakindent = true
@@ -117,10 +119,10 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -600,18 +602,17 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
-        -- gopls = {},
+        clangd = {},
+        gopls = {},
         pyright = {},
-        -- rust_analyzer = {},
+        rust_analyzer = {},
+        ts_ls = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        ts_ls = {},
-        --
 
         lua_ls = {
           -- cmd = { ... },
@@ -623,10 +624,24 @@ require('lazy').setup({
                 callSnippet = 'Replace',
               },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+              diagnostics = {
+                globals = {
+                  'vim',
+                  'love',
+                },
+              },
               -- diagnostics = { disable = { 'missing-fields' } },
+              workspace = {
+                library = {
+                  [vim.fn.expand '$VIMRUNTIME/lua'] = true,
+                  [vim.fn.expand '$VIMRUNTIME/lua/vim/lsp'] = true,
+                  ['${3rd}/love2d/library'] = true, -- Add Love2D library
+                },
+              },
             },
           },
         },
+        intelephense = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -698,10 +713,10 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        python = { 'isort', 'black' },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
       },
     },
   },
@@ -819,7 +834,6 @@ require('lazy').setup({
           comments = { italic = false }, -- Disable italics in comments
         },
       }
-
       vim.cmd.colorscheme 'tokyonight-night'
     end,
   },
@@ -909,12 +923,12 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  --require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
@@ -926,6 +940,31 @@ require('lazy').setup({
   -- Or use telescope!
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
+
+  {
+    'stevearc/oil.nvim', ---@module 'oil'
+    ---@type oil.SetupOpts
+    opts = {},
+    -- Optional dependencies
+    dependencies = { { 'echasnovski/mini.icons', opts = {} } },
+    -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+    -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
+    lazy = false,
+  },
+  {
+    'ray-x/go.nvim',
+    dependencies = { -- optional packages
+      'ray-x/guihua.lua',
+      'neovim/nvim-lspconfig',
+      'nvim-treesitter/nvim-treesitter',
+    },
+    config = function()
+      require('go').setup()
+    end,
+    event = { 'CmdlineEnter' },
+    ft = { 'go', 'gomod' },
+    build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
+  },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
@@ -948,7 +987,29 @@ require('lazy').setup({
   },
 })
 
-require('oil').setup()
+
+require('oil').setup {
+  default_file_explorer = true,
+  columns = {
+    'icon',
+    --    'permissions',
+    'size',
+    -- 'mtime',
+  },
+}
 vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
+
+vim.opt['tabstop'] = 4
+vim.opt['softtabstop'] = 4
+vim.opt['shiftwidth'] = 4
+vim.opt['expandtab'] = true
+
+vim.api.nvim_create_autocmd('BufEnter', {
+  pattern = '*.gd',
+  callback = function()
+    vim.bo.tabstop = 4
+    vim.bo.softtabstop = 4
+    vim.bo.shiftwidth = 4
+    vim.bo.expandtab = true
+  end,
+})
