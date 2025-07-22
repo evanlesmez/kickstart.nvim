@@ -883,7 +883,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'markdown', 'markdown_inline', 'lua', 'luadoc', 'query', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -893,7 +893,7 @@ require('lazy').setup({
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
         additional_vim_regex_highlighting = { 'ruby' },
       },
-      indent = { enable = true, disable = { 'ruby' } },
+      indent = { enable = true, disable = { 'ruby', 'html' } },
     },
     -- There are additional nvim-treesitter modules that you can use to interact
     -- with nvim-treesitter. You should go explore a few and see what interests you:
@@ -986,7 +986,6 @@ require('lazy').setup({
   },
 })
 
-
 require('oil').setup {
   default_file_explorer = true,
   columns = {
@@ -1003,6 +1002,13 @@ vim.opt['softtabstop'] = 4
 vim.opt['shiftwidth'] = 4
 vim.opt['expandtab'] = true
 
+--vim.api.nvim_create_autocmd('FileType', {
+--  pattern = 'html',
+--  callback = function()
+--    vim.bo.shiftwidth = 2
+--    vim.bo['softtabstop'] = 2
+--  end,
+--})
 vim.api.nvim_create_autocmd('BufEnter', {
   pattern = '*.gd',
   callback = function()
