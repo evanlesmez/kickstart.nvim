@@ -714,7 +714,10 @@ require('lazy').setup({
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
         python = { 'isort', 'black' },
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        rust = { 'rustfmt', lsp_format = 'fallback' },
+
+        --NOTE: prettier seems to cause some fuss with eslint_d javascript = { 'eslint_d', 'prettierd', 'prettier', stop_after_first = true },
+        javascript = { 'eslint_d', stop_after_first = true },
         -- You can use 'stop_after_first' to run the first available formatter from the list
       },
     },
@@ -838,7 +841,7 @@ require('lazy').setup({
   },
 
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = true } },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
