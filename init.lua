@@ -731,6 +731,7 @@ require('lazy').setup({
 
         --NOTE: prettier seems to cause some fuss with eslint_d javascript = { 'eslint_d', 'prettierd', 'prettier', stop_after_first = true },
         javascript = { 'eslint_d', stop_after_first = true },
+        typescript = { 'deno_fmt' },
         -- You can use 'stop_after_first' to run the first available formatter from the list
       },
     },
