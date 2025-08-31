@@ -842,15 +842,24 @@ require('lazy').setup({
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     'folke/tokyonight.nvim',
+    lazy = false,
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
-      ---@diagnostic disable-next-line: missing-fields
       require('tokyonight').setup {
+        style = 'night',
+        transparent = true,
         styles = {
-          comments = { italic = false }, -- Disable italics in comments
+          sidebars = 'transparent',
+          floats = 'transparent',
         },
+        on_colors = function(colors)
+          colors.bg = '#000000'
+          colors.bg_dark = '#000000'
+          colors.bg_sidebar = '#000000'
+        end,
+        on_highlights = function(hl, c) end,
       }
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'tokyonight'
     end,
   },
 
