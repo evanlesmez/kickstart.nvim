@@ -961,6 +961,32 @@ require('lazy').setup({
       graph_style = 'unicode',
     },
   },
+  {
+    'stevearc/aerial.nvim',
+    opts = {
+      dependecies = {
+        'nvim-treesitter/nvim-treesitter',
+        'nvim-tree-nvim-web-devicons',
+      },
+    },
+  },
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' }, -- if you use the mini.nvim suite
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' }, -- if you use standalone mini plugins
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {},
+  },
+  {
+    'quarto-dev/quarto-nvim',
+    dependencies = {
+      'jmbuhr/otter.nvim',
+      'nvim-treesitter/nvim-treesitter',
+    },
+    opts = {},
+  },
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
@@ -1044,6 +1070,25 @@ require('oil').setup {
   },
 }
 vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+
+require('aerial').setup {
+  -- optionally use on_attach to set keymaps when aerial has attached to a buffer
+  on_attach = function(bufnr)
+    -- Jump forwards/backwards with '{' and '}'
+    vim.keymap.set('n', 'ga', function()
+      require('aerial').next(vim.v.count1)
+    end, { buffer = bufnr })
+    vim.keymap.set('n', 'gA', function()
+      require('aerial').prev(vim.v.count1)
+    end, { buffer = bufnr })
+  end,
+}
+-- You probably also want to set a keymap to toggle aerial
+vim.keymap.set('n', '<leader>a', '<cmd>AerialToggle!<CR>')
+
+local quarto = require 'quarto'
+quarto.setup()
+vim.keymap.set('n', '<leader>qp', quarto.quartoPreview, { silent = true, noremap = true })
 
 vim.opt['tabstop'] = 4
 vim.opt['softtabstop'] = 4
