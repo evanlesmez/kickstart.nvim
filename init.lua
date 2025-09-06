@@ -1101,14 +1101,14 @@ local function toggle_telescope(harpoon_files)
     :find()
 end
 
-vim.keymap.set('n', '<leader>hl', function()
+vim.keymap.set('n', '<leader>pl', function()
   toggle_telescope(harpoon:list())
 end, { desc = 'Open harpoon window' })
 -- m.keymap.set('n', '<C-e>', function()
 --  harpoon.ui:toggle_quick_menu(harpoon:list())
 --end)
 
-vim.keymap.set('n', '<leader>ha', function()
+vim.keymap.set('n', '<leader>pa', function()
   harpoon:list():add()
 end, { desc = 'Harpoon add' })
 
@@ -1137,6 +1137,14 @@ local neogit = require 'neogit'
 vim.keymap.set('n', '<leader>ng', function()
   neogit.open()
 end, { desc = 'Open neogit' })
+
+vim.keymap.set('n', '<leader>n%', function()
+  neogit.open { cwd = '%:p:h' }
+end, { desc = 'Open neogit this file' })
+
+vim.keymap.set('n', '<leader>cc', ':e $MYVIMRC<CR>', { desc = 'Config - init.lua' })
+vim.keymap.set('n', '<leader>cf', ':Telescope find_files cwd=~/.config/nvim<CR>', { desc = 'Config - find files' })
+vim.keymap.set('n', '<leader>cs', ':Telescope live_grep cwd=~/.config/nvim<CR>', { desc = 'Config - search' })
 
 vim.opt['tabstop'] = 4
 vim.opt['softtabstop'] = 4
