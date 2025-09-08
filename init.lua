@@ -597,6 +597,7 @@ require('lazy').setup({
       --  2) via your system's package manager; or
       --  3) via a release binary from a language server's repo that's accessible somewhere on your system.
 
+      local util = require 'lspconfig.util'
       -- The servers table comprises of the following sub-tables:
       -- 1. mason
       -- 2. others
@@ -626,7 +627,14 @@ require('lazy').setup({
           -- But for many setups, the LSP (`ts_ls`) will work just fine
           ts_ls = {
             workspace_required = true,
-            root_markers = { 'package.json' },
+            root_dir = function(bufnr, on_dir)
+              local fname = vim.api.nvim_buf_get_name(bufnr)
+              if util.root_pattern('deno.json', 'deno.jsonc')(fname) then
+                on_dir()
+              else
+                on_dir(util.root_pattern 'package.json'(fname))
+              end
+            end,
           },
           denols = {
             workspace_required = true,
