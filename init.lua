@@ -597,7 +597,6 @@ require('lazy').setup({
       --  2) via your system's package manager; or
       --  3) via a release binary from a language server's repo that's accessible somewhere on your system.
 
-      local util = require 'lspconfig.util'
       -- The servers table comprises of the following sub-tables:
       -- 1. mason
       -- 2. others
@@ -622,16 +621,12 @@ require('lazy').setup({
           rust_analyzer = {},
           -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
 
+          -- Some languages (like typescript) have entire language plugins that can be useful:
+          --    https://github.com/pmizio/typescript-tools.nvim
+          -- But for many setups, the LSP (`ts_ls`) will work just fine
           ts_ls = {
             workspace_required = true,
-            root_dir = function(bufnr, on_dir)
-              local fname = vim.api.nvim_buf_get_name(bufnr)
-              if util.root_pattern('deno.json', 'deno.jsonc')(fname) then
-                on_dir()
-              else
-                on_dir(util.root_pattern 'package.json'(fname))
-              end
-            end,
+            root_markers = { 'package.json' },
           },
           denols = {
             workspace_required = true,
@@ -847,15 +842,24 @@ require('lazy').setup({
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     'folke/tokyonight.nvim',
+    lazy = false,
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
-      ---@diagnostic disable-next-line: missing-fields
       require('tokyonight').setup {
+        style = 'night',
+        transparent = true,
         styles = {
-          comments = { italic = false }, -- Disable italics in comments
+          sidebars = 'transparent',
+          floats = 'transparent',
         },
+        on_colors = function(colors)
+          colors.bg = '#000000'
+          colors.bg_dark = '#000000'
+          colors.bg_sidebar = '#000000'
+        end,
+        on_highlights = function(hl, c) end,
       }
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'tokyonight'
     end,
   },
 
@@ -946,15 +950,52 @@ require('lazy').setup({
       { '<leader>vs', '<cmd>LoveStop<cr>', ft = 'lua', desc = 'Stop LÖVE' },
     },
   },
-  -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
-  -- init.lua. If you want these files, they are in the repository, so you can just download them and
-  -- place them in the correct locations.
+  {
+    'NeogitOrg/neogit',
+    dependencies = {
+      'nvim-lua/plenary.nvim', -- required
+      'sindrets/diffview.nvim', -- optional - Diff integration
+      'nvim-telescope/telescope.nvim',
+    },
+    opts = {
+      graph_style = 'unicode',
+    },
+  },
+  {
+    'stevearc/aerial.nvim',
+    opts = {
+      dependecies = {
+        'nvim-treesitter/nvim-treesitter',
+        'nvim-tree-nvim-web-devicons',
+      },
+    },
+  },
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' }, -- if you use the mini.nvim suite
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' }, -- if you use standalone mini plugins
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {},
+  },
+  {
+    'quarto-dev/quarto-nvim',
+    dependencies = {
+      'jmbuhr/otter.nvim',
+      'nvim-treesitter/nvim-treesitter',
+    },
+    opts = {},
+  },
+  {
+    'ThePrimeagen/harpoon',
+    branch = 'harpoon2',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope.nvim',
+    },
+  },
 
-  -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
-  --
-  --  Here are some example plugins that I've included in the Kickstart repository.
-  --  Uncomment any of the lines below to enable them (you will need to restart nvim).
-  --
   require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.lint',
@@ -973,17 +1014,6 @@ require('lazy').setup({
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
 
-  {
-    'stevearc/oil.nvim',
-    ---@module 'oil'
-    ---@type oil.SetupOpts
-    opts = {},
-    -- Optional dependencies
-    dependencies = { { 'echasnovski/mini.icons', opts = {} } },
-    -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
-    -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
-    lazy = false,
-  },
   {
     'ray-x/go.nvim',
     dependencies = { -- optional packages
@@ -1024,12 +1054,97 @@ require('oil').setup {
   default_file_explorer = true,
   columns = {
     'icon',
+    --    'permissions',
     'size',
-    -- 'permissions',
     -- 'mtime',
   },
 }
 vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+
+require('aerial').setup {
+  -- optionally use on_attach to set keymaps when aerial has attached to a buffer
+  on_attach = function(bufnr)
+    -- Jump forwards/backwards with '{' and '}'
+    vim.keymap.set('n', 'ga', function()
+      require('aerial').next(vim.v.count1)
+    end, { buffer = bufnr })
+    vim.keymap.set('n', 'gA', function()
+      require('aerial').prev(vim.v.count1)
+    end, { buffer = bufnr })
+  end,
+}
+vim.keymap.set('n', '<leader>a', '<cmd>AerialToggle!<CR>')
+
+local quarto = require 'quarto'
+quarto.setup()
+vim.keymap.set('n', '<leader>qp', quarto.quartoPreview, { silent = true, noremap = true })
+
+local harpoon = require 'harpoon'
+harpoon:setup()
+-- basic telescope configuration
+local conf = require('telescope.config').values
+local function toggle_telescope(harpoon_files)
+  local file_paths = {}
+  for _, item in ipairs(harpoon_files.items) do
+    table.insert(file_paths, item.value)
+  end
+
+  require('telescope.pickers')
+    .new({}, {
+      prompt_title = 'Harpoon',
+      finder = require('telescope.finders').new_table {
+        results = file_paths,
+      },
+      previewer = conf.file_previewer {},
+      sorter = conf.generic_sorter {},
+    })
+    :find()
+end
+
+vim.keymap.set('n', '<leader>pl', function()
+  toggle_telescope(harpoon:list())
+end, { desc = 'Open harpoon window' })
+-- m.keymap.set('n', '<C-e>', function()
+--  harpoon.ui:toggle_quick_menu(harpoon:list())
+--end)
+
+vim.keymap.set('n', '<leader>pa', function()
+  harpoon:list():add()
+end, { desc = 'Harpoon add' })
+
+vim.keymap.set('n', '<C-h>', function()
+  harpoon:list():select(1)
+end)
+vim.keymap.set('n', '<C-t>', function()
+  harpoon:list():select(2)
+end)
+vim.keymap.set('n', '<C-n>', function()
+  harpoon:list():select(3)
+end)
+vim.keymap.set('n', '<C-s>', function()
+  harpoon:list():select(4)
+end)
+
+-- Toggle previous & next buffers stored within Harpoon list
+vim.keymap.set('n', '<C-S-P>', function()
+  harpoon:list():prev()
+end)
+vim.keymap.set('n', '<C-S-N>', function()
+  harpoon:list():next()
+end)
+
+local neogit = require 'neogit'
+vim.keymap.set('n', '<leader>ng', function()
+  neogit.open()
+end, { desc = 'Open neogit' })
+
+vim.keymap.set('n', '<leader>n%', function()
+  neogit.open { cwd = '%:p:h' }
+end, { desc = 'Open neogit this file' })
+
+vim.keymap.set('n', '<leader>cc', ':e $MYVIMRC<CR>', { desc = 'Config - init.lua' })
+vim.keymap.set('n', '<leader>cf', ':Telescope find_files cwd=~/.config/nvim<CR>', { desc = 'Config - find files' })
+vim.keymap.set('n', '<leader>cs', ':Telescope live_grep cwd=~/.config/nvim<CR>', { desc = 'Config - search' })
 
 vim.opt['tabstop'] = 4
 vim.opt['softtabstop'] = 4
