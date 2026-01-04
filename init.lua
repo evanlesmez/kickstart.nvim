@@ -844,30 +844,15 @@ require('lazy').setup({
     },
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
+  {
+    'uloco/bluloco.nvim',
     lazy = false,
-    priority = 1000, -- Make sure to load this before all the other start plugins.
+    priority = 1000,
+    dependencies = { 'rktjmp/lush.nvim' },
     config = function()
-      require('tokyonight').setup {
-        style = 'night',
-        transparent = true,
-        styles = {
-          sidebars = 'transparent',
-          floats = 'transparent',
-        },
-        on_colors = function(colors)
-          colors.bg = '#000000'
-          colors.bg_dark = '#000000'
-          colors.bg_sidebar = '#000000'
-        end,
-        on_highlights = function(hl, c) end,
-      }
-      vim.cmd.colorscheme 'tokyonight'
+      vim.o.background = 'light'
+      vim.opt.termguicolors = true
+      vim.cmd 'colorscheme bluloco'
     end,
   },
 
