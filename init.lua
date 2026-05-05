@@ -788,6 +788,7 @@ require('lazy').setup({
       vim.o.background = 'light'
       vim.opt.termguicolors = true
       vim.cmd 'colorscheme bluloco'
+      vim.api.nvim_set_hl(0, 'MatchParen', { bg = '#ff5fff', fg = '#000000', bold = true })
     end,
   },
 
