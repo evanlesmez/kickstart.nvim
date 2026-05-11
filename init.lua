@@ -449,6 +449,15 @@ require('lazy').setup({
 
       -- Useful status updates for LSP.
       { 'j-hui/fidget.nvim', opts = {} },
+      {
+        'folke/lazydev.nvim',
+        ft = 'lua',
+        opts = {
+          library = {
+            { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+          },
+        },
+      },
     },
     config = function()
       -- In general, you have a "server" which is some tool built to understand a particular
@@ -581,31 +590,10 @@ require('lazy').setup({
 
         stylua = {}, -- Used to format Lua code
 
-        -- Special Lua Config, as recommended by neovim help docs
+        -- lua_ls library types are provided by lazydev.nvim (see deps above).
         lua_ls = {
           on_init = function(client)
             client.server_capabilities.documentFormattingProvider = false -- Disable formatting (formatting is done by stylua)
-
-            if client.workspace_folders then
-              local path = client.workspace_folders[1].name
-              if path ~= vim.fn.stdpath 'config' and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc')) then return end
-            end
-
-            client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
-              runtime = {
-                version = 'LuaJIT',
-                path = { 'lua/?.lua', 'lua/?/init.lua' },
-              },
-              workspace = {
-                checkThirdParty = false,
-                -- NOTE: this is a lot slower and will cause issues when working on your own configuration.
-                --  See https://github.com/neovim/nvim-lspconfig/issues/3189
-                library = vim.tbl_extend('force', vim.api.nvim_get_runtime_file('', true), {
-                  '${3rd}/luv/library',
-                  '${3rd}/busted/library',
-                }),
-              },
-            })
           end,
           ---@type lspconfig.settings.lua_ls
           settings = {
@@ -778,20 +766,20 @@ require('lazy').setup({
       signature = { enabled = true },
     },
   },
-
   {
-    'uloco/bluloco.nvim',
+    'scottmckendry/cyberdream.nvim',
     lazy = false,
     priority = 1000,
-    dependencies = { 'rktjmp/lush.nvim' },
-    config = function()
-      vim.o.background = 'light'
-      vim.opt.termguicolors = true
-      vim.cmd 'colorscheme bluloco'
-      vim.api.nvim_set_hl(0, 'MatchParen', { bg = '#ff5fff', fg = '#000000', bold = true })
+    opts = {
+      transparent = true,
+      saturation = 1,
+    },
+    config = function(_, opts)
+      require('cyberdream').setup(opts)
+      vim.cmd 'colorscheme cyberdream'
+      vim.o.background = 'dark'
     end,
   },
-
   -- Highlight todo, notes, etc in comments
   {
     'folke/todo-comments.nvim',
