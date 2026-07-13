@@ -5,4 +5,36 @@
 
 ---@module 'lazy'
 ---@type LazySpec
-return {}
+return {
+  {
+    'hedyhli/outline.nvim',
+    lazy = true,
+    cmd = { 'Outline', 'OutlineOpen' },
+    keys = {
+      { '<leader>o', '<cmd>Outline<CR>', desc = 'Toggle Outline' },
+    },
+    opts = {
+      width = 35,
+      show_numbers = false,
+      show_relative_numbers = false,
+      symbols = {
+        icons = {
+          -- You can customize icons here if needed
+        },
+      },
+    },
+  },
+  {
+    'SmiteshP/nvim-navic',
+    dependencies = { 'neovim/nvim-lspconfig' },
+    init = function()
+      -- Prevent errors when LSP doesn't support document symbols
+      vim.g.navic_silence = true
+    end,
+    opts = {
+      separator = ' > ',
+      highlight = true,
+      depth_limit = 5,
+    },
+  },
+}

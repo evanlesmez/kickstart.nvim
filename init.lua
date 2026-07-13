@@ -104,6 +104,9 @@ vim.o.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
 
+-- navic bar for context of encapsulation of current line
+vim.o.winbar = "%{%v:lua.require('nvim-navic').get_location()%}"
+
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
@@ -543,6 +546,7 @@ require('lazy').setup({
           if client and client:supports_method('textDocument/inlayHint', event.buf) then
             map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
           end
+          if client.server_capabilities.documentSymbolProvider then require('nvim-navic').attach(client, event.buf) end
         end,
       })
 
@@ -930,15 +934,6 @@ require('lazy').setup({
     },
   },
   {
-    'stevearc/aerial.nvim',
-    opts = {
-      dependecies = {
-        'nvim-treesitter/nvim-treesitter',
-        'nvim-tree-nvim-web-devicons',
-      },
-    },
-  },
-  {
     'MeanderingProgrammer/render-markdown.nvim',
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' }, -- if you use the mini.nvim suite
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' }, -- if you use standalone mini plugins
@@ -974,7 +969,7 @@ require('lazy').setup({
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
@@ -1001,16 +996,6 @@ require('lazy').setup({
     },
   },
 })
-
-require('aerial').setup {
-  -- optionally use on_attach to set keymaps when aerial has attached to a buffer
-  on_attach = function(bufnr)
-    -- Jump forwards/backwards with '{' and '}'
-    vim.keymap.set('n', 'ga', function() require('aerial').next(vim.v.count1) end, { buffer = bufnr })
-    vim.keymap.set('n', 'gA', function() require('aerial').prev(vim.v.count1) end, { buffer = bufnr })
-  end,
-}
-vim.keymap.set('n', '<leader>a', '<cmd>AerialToggle!<CR>')
 
 local quarto = require 'quarto'
 quarto.setup()
@@ -1084,6 +1069,6 @@ vim.api.nvim_create_autocmd('BufEnter', {
     vim.bo.expandtab = true
   end,
 })
-
+--
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
