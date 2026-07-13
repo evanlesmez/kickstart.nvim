@@ -14,9 +14,13 @@ return {
       { '<leader>o', '<cmd>Outline<CR>', desc = 'Toggle Outline' },
     },
     opts = {
-      width = 35,
-      show_numbers = false,
-      show_relative_numbers = false,
+      outline_window = {
+        width = 35,
+        relative_width = false,
+        position = 'left',
+        show_numbers = false,
+        show_relative_numbers = false,
+      },
       symbols = {
         icons = {
           -- You can customize icons here if needed
