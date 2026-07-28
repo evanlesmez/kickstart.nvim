@@ -36,6 +36,7 @@ return {
     { '<leader>B', function() require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ') end, desc = 'Debug: Set Breakpoint' },
     -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
     { '<F7>', function() require('dapui').toggle() end, desc = 'Debug: See last session result.' },
+    { '<leader>dr', function() require('dapui').open { reset = true } end, desc = 'Debug: Reset UI layout' },
   },
   config = function()
     local dap = require 'dap'
@@ -48,7 +49,22 @@ return {
 
       -- You can provide additional configuration to the handlers,
       -- see mason-nvim-dap README for more information
-      handlers = {},
+      handlers = {
+        function(config) require('mason-nvim-dap').default_setup(config) end,
+        -- Xdebug 3 listens on 9003; mason-nvim-dap's default config still uses
+        -- the Xdebug 2 port (9000), so override it here.
+        php = function(config)
+          config.configurations = {
+            {
+              type = 'php',
+              request = 'launch',
+              name = 'Listen for Xdebug (port 9003)',
+              port = 9003,
+            },
+          }
+          require('mason-nvim-dap').default_setup(config)
+        end,
+      },
 
       -- You'll need to check that you have the required things installed
       -- online, please don't ask me how to install them :)

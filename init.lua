@@ -778,10 +778,26 @@ require('lazy').setup({
       transparent = true,
       saturation = 1,
     },
+    --
+    -- config = function(_, opts)
+    --  require('cyberdream').setup(opts)
+    --  vim.cmd 'colorscheme cyberdream'
+    --  vim.o.background = 'dark'
+    -- end,
+  },
+  {
+    'g-kirti/hardhat.nvim',
+    lazy = false,
+    priority = 1000,
+    opts = {
+      transparent = true,
+      styles = {
+        bold = true,
+      },
+    },
     config = function(_, opts)
-      require('cyberdream').setup(opts)
-      vim.cmd 'colorscheme cyberdream'
-      vim.o.background = 'dark'
+      require('hardhat').setup(opts)
+      vim.cmd.colorscheme 'hardhat'
     end,
   },
   -- Highlight todo, notes, etc in comments

@@ -1,6 +1,6 @@
 -- You can add your own plugins here or in other files in this directory!
 --  I promise not to create any merge conflicts in this directory :)
---
+
 -- See the kickstart.nvim README for more information
 
 ---@module 'lazy'
@@ -15,10 +15,10 @@ return {
     },
     opts = {
       outline_window = {
-        width = 35,
+        width = 20,
         relative_width = false,
-        position = 'left',
-        show_numbers = false,
+        position = 'right',
+        show_numbers = true,
         show_relative_numbers = false,
       },
       symbols = {
@@ -39,6 +39,21 @@ return {
       separator = ' > ',
       highlight = true,
       depth_limit = 5,
+    },
+  },
+  {
+    'nvim-neotest/neotest',
+    dependencies = {
+      'nvim-neotest/nvim-nio',
+      'antoinemadec/FixCursorHold.nvim',
+      'nvim-treesitter/nvim-treesitter',
+      'olimorris/neotest-phpunit',
+    },
+    opts = {
+      adapters = {
+        'neotest-python',
+        'neotest-phpunit',
+      },
     },
   },
 }
