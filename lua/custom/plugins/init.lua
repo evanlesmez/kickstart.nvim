@@ -15,7 +15,7 @@ return {
     },
     opts = {
       outline_window = {
-        width = 20,
+        width = 25,
         relative_width = false,
         position = 'right',
         show_numbers = true,

@@ -776,28 +776,12 @@ require('lazy').setup({
     priority = 1000,
     opts = {
       transparent = true,
-      saturation = 1,
-    },
-    --
-    -- config = function(_, opts)
-    --  require('cyberdream').setup(opts)
-    --  vim.cmd 'colorscheme cyberdream'
-    --  vim.o.background = 'dark'
-    -- end,
-  },
-  {
-    'g-kirti/hardhat.nvim',
-    lazy = false,
-    priority = 1000,
-    opts = {
-      transparent = true,
-      styles = {
-        bold = true,
-      },
+      saturation = 0.8,
     },
     config = function(_, opts)
-      require('hardhat').setup(opts)
-      vim.cmd.colorscheme 'hardhat'
+      require('cyberdream').setup(opts)
+      vim.cmd 'colorscheme cyberdream'
+      vim.o.background = 'dark'
     end,
   },
   -- Highlight todo, notes, etc in comments
@@ -1048,10 +1032,10 @@ vim.keymap.set('n', '<leader>pl', function() toggle_telescope(harpoon:list()) en
 
 vim.keymap.set('n', '<leader>pa', function() harpoon:list():add() end, { desc = 'Harpoon add' })
 
-vim.keymap.set('n', '<C-h>', function() harpoon:list():select(1) end)
+vim.keymap.set('n', '<C-n>', function() harpoon:list():select(1) end)
 vim.keymap.set('n', '<C-t>', function() harpoon:list():select(2) end)
-vim.keymap.set('n', '<C-n>', function() harpoon:list():select(3) end)
 vim.keymap.set('n', '<C-s>', function() harpoon:list():select(4) end)
+vim.keymap.set('n', '<C-h>', function() harpoon:list():select(4) end)
 
 -- Toggle previous & next buffers stored within Harpoon list
 vim.keymap.set('n', '<C-S-P>', function() harpoon:list():prev() end)
