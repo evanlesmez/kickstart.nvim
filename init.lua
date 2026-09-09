@@ -570,7 +570,7 @@ require('lazy').setup({
         clangd = {},
         -- gopls = {},
         pyright = {},
-        rust_analyzer = {},
+        rust_analyzer = {}, -- NOTE: also install rust-src in OS package manager
         intelephense = {},
 
         -- Some languages (like typescript) have entire language plugins that can be useful:
