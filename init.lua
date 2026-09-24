@@ -77,6 +77,8 @@ vim.o.signcolumn = 'yes'
 -- Decrease update time
 vim.o.updatetime = 250
 
+require 'custom.autoreload'
+
 -- Decrease mapped sequence wait time
 vim.o.timeoutlen = 300
 
@@ -861,8 +863,9 @@ require('lazy').setup({
 
         -- enables treesitter based folds
         -- for more info on folds see `:help folds`
-        -- vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-        -- vim.wo.foldmethod = 'expr'
+        vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+        vim.wo.foldmethod = 'expr'
+        vim.wo.foldlevel = 99
 
         -- check if treesitter indentation is available for this language, and if so enable it
         -- in case there is no indent query, the indentexpr will fallback to the vim's built in one
@@ -912,6 +915,20 @@ require('lazy').setup({
     -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
     -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
     lazy = false,
+  },
+  {
+    'FylerOrg/fyler.nvim',
+    dependencies = { 'echasnovski/mini.icons' },
+    opts = { integrations = { icon = 'mini_icons' } },
+    keys = {
+      {
+        '<leader>e',
+        function()
+          require('fyler').open { kind = 'split_left_most' }
+        end,
+        desc = 'Fyler tree',
+      },
+    },
   },
   {
     'S1M0N38/love2d.nvim',
