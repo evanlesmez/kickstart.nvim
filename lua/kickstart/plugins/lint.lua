@@ -8,6 +8,7 @@ return {
   config = function()
     local lint = require 'lint'
     lint.linters_by_ft = {}
+    if vim.fn.executable './vendor/bin/phpcs' == 1 then lint.linters_by_ft.php = { 'phpcs' } end
 
     -- To allow other plugins to add linters to require('lint').linters_by_ft,
     -- instead set linters_by_ft like this:
