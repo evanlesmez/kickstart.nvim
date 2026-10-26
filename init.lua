@@ -922,13 +922,33 @@ require('lazy').setup({
     end,
   },
   {
-    'FylerOrg/fyler.nvim',
+    'stevearc/oil.nvim',
+    ---@module 'oil'
+    ---@type oil.SetupOpts
+    opts = {
+      default_file_explorer = true,
+      columns = { 'icon', 'size' },
+    },
+    keys = {
+      { '-', '<CMD>Oil<CR>', desc = 'Open parent directory' },
+    },
     dependencies = { { 'echasnovski/mini.icons', opts = {} } },
-    opts = { integrations = { icon = 'mini_icons' } },
     -- Must load at startup so it can replace netrw for directory buffers (e.g. `nvim .`).
     lazy = false,
+  },
+  {
+    'FylerOrg/fyler.nvim',
+    dependencies = { { 'echasnovski/mini.icons', opts = {} } },
+    cmd = 'Fyler',
+    opts = {
+      integrations = { icon = 'mini_icons' },
+      -- Oil owns directory buffers; two hijackers would race on `nvim .`.
+      use_as_default_explorer = false,
+      -- Fyler sets winfixwidth/winfixheight on its window, and in `replace` mode that is your code window,
+      -- where the flags stay after you open a file. Then every window is fixed and splits (e.g. Outline) squash the tree.
+      kind_presets = { replace = { win_opts = { winfixwidth = false, winfixheight = false } } },
+    },
     keys = {
-      { '-', function() require('fyler').open() end, desc = 'Fyler (current window)' },
       {
         '<leader>e',
         function() require('fyler').open { kind = 'split_left_most' } end,
