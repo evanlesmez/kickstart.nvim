@@ -32,6 +32,8 @@ return {
     { '<F1>', function() require('dap').step_into() end, desc = 'Debug: Step Into' },
     { '<F2>', function() require('dap').step_over() end, desc = 'Debug: Step Over' },
     { '<F3>', function() require('dap').step_out() end, desc = 'Debug: Step Out' },
+    { '<F4>', function() require('dap').terminate() end, desc = 'Debug: Terminate' },
+    { '<F6>', function() require('dap').run_last() end, desc = 'Debug: Run Last' },
     { '<leader>b', function() require('dap').toggle_breakpoint() end, desc = 'Debug: Toggle Breakpoint' },
     { '<leader>B', function() require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ') end, desc = 'Debug: Set Breakpoint' },
     -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
@@ -88,13 +90,13 @@ return {
       controls = {
         icons = {
           pause = '⏸',
-          play = '▶',
-          step_into = '⏎',
-          step_over = '⏭',
-          step_out = '⏮',
+          play = '▶ F5',
+          step_into = '⏎ F1',
+          step_over = '⏭ F2',
+          step_out = '⏮ F3',
           step_back = 'b',
-          run_last = '▶▶',
-          terminate = '⏹',
+          run_last = '▶▶ F6',
+          terminate = '⏹ F4',
           disconnect = '⏏',
         },
       },

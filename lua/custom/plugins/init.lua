@@ -41,19 +41,33 @@ return {
       depth_limit = 5,
     },
   },
-  {
+  { -- https://github.com/nvim-neotest/neotest
     'nvim-neotest/neotest',
     dependencies = {
       'nvim-neotest/nvim-nio',
       'antoinemadec/FixCursorHold.nvim',
       'nvim-treesitter/nvim-treesitter',
-      'olimorris/neotest-phpunit',
+      'nvim-neotest/neotest-python', -- https://github.com/nvim-neotest/neotest-python
+      'olimorris/neotest-phpunit', -- https://github.com/olimorris/neotest-phpunit
     },
-    opts = {
-      adapters = {
-        'neotest-python',
-        'neotest-phpunit',
-      },
+    -- <leader>t is the Toggle group, so tests use <leader>T.
+    keys = {
+      { '<leader>Tn', function() require('neotest').run.run() end, desc = '[T]est [n]earest' },
+      { '<leader>Td', function() require('neotest').run.run { strategy = 'dap' } end, desc = '[T]est [d]ebug nearest' },
+      { '<leader>Tf', function() require('neotest').run.run(vim.fn.expand '%') end, desc = '[T]est [f]ile' },
+      { '<leader>Ts', function() require('neotest').summary.toggle() end, desc = '[T]est [s]ummary' },
+      { '<leader>To', function() require('neotest').output.open { enter = true } end, desc = '[T]est [o]utput' },
     },
+    config = function()
+      require('neotest').setup {
+        -- Adapters must be adapter objects; plain name strings are not resolved by neotest.
+        adapters = {
+          -- Finds the project venv via $VIRTUAL_ENV or any */pyvenv.cfg under the cwd.
+          -- Debugging uses the `python` dap adapter registered by mason-nvim-dap (debugpy).
+          require 'neotest-python' { runner = 'pytest', dap = { justMyCode = false } },
+          require 'neotest-phpunit',
+        },
+      }
+    end,
   },
 }

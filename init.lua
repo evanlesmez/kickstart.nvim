@@ -573,7 +573,29 @@ require('lazy').setup({
         -- gopls = {},
         pyright = {},
         rust_analyzer = {}, -- NOTE: also install rust-src in OS package manager
-        intelephense = {},
+        intelephense = {
+          settings = {
+            intelephense = {
+              -- Setting stubs replaces the server defaults, so this is its default list plus wordpress.
+              stubs = {
+                'apache', 'bcmath', 'bz2', 'calendar', 'com_dotnet', 'Core', 'ctype', 'curl', 'date', 'dba', 'dom', 'enchant',
+                'exif', 'fileinfo', 'filter', 'fpm', 'ftp', 'gd', 'hash', 'iconv', 'imap', 'intl', 'json', 'ldap', 'libxml',
+                'mbstring', 'mcrypt', 'mssql', 'mysqli', 'oci8', 'odbc', 'openssl', 'pcntl', 'pcre', 'PDO', 'pgsql', 'Phar',
+                'posix', 'pspell', 'random', 'readline', 'Reflection', 'regex', 'session', 'shmop', 'SimpleXML', 'snmp', 'soap',
+                'sockets', 'sodium', 'SPL', 'sqlite3', 'standard', 'superglobals', 'sybase', 'sysvmsg', 'sysvsem', 'sysvshm',
+                'tidy', 'tokenizer', 'uri', 'xml', 'xmlreader', 'xmlrpc', 'xmlwriter', 'Zend OPcache', 'zip', 'zlib',
+                'wordpress',
+              },
+              -- WP-CLI stubs are not bundled. Install or update them with:
+              --   mkdir -p ~/.local/share/php-stubs && cd ~/.local/share/php-stubs
+              --   COMPOSER_HOME=$(mktemp -d) composer require php-stubs/wp-cli-stubs
+              -- The temporary COMPOSER_HOME skips the global config's private GitLab registry.
+              environment = {
+                includePaths = { vim.fn.expand '~/.local/share/php-stubs/vendor/php-stubs/wp-cli-stubs' },
+              },
+            },
+          },
+        },
 
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
@@ -900,27 +922,13 @@ require('lazy').setup({
     end,
   },
   {
-    'stevearc/oil.nvim',
-    ---@module 'oil'
-    ---@type oil.SetupOpts
-    opts = {
-      default_file_explorer = true,
-      columns = { 'icon', 'size' },
-    },
-    keys = {
-      { '-', '<CMD>Oil<CR>', desc = 'Open parent directory' },
-    },
-    -- Optional dependencies
-    dependencies = { { 'echasnovski/mini.icons', opts = {} } },
-    -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
-    -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
-    lazy = false,
-  },
-  {
     'FylerOrg/fyler.nvim',
-    dependencies = { 'echasnovski/mini.icons' },
+    dependencies = { { 'echasnovski/mini.icons', opts = {} } },
     opts = { integrations = { icon = 'mini_icons' } },
+    -- Must load at startup so it can replace netrw for directory buffers (e.g. `nvim .`).
+    lazy = false,
     keys = {
+      { '-', function() require('fyler').open() end, desc = 'Fyler (current window)' },
       {
         '<leader>e',
         function() require('fyler').open { kind = 'split_left_most' } end,
