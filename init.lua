@@ -1,31 +1,3 @@
---[[
-  kickstart nvim
-  Run AND READ `:help`.
-    This will open up a help window with some basic information
-    about reading, navigating and searching the builtin help documentation.
-
-    This should be the first place you go to look when you're stuck or confused
-    with something. It's one of my favorite Neovim features.
-
-    MOST IMPORTANTLY, we provide a keymap "<space>sh" to [s]earch the [h]elp documentation,
-    which is very useful when you're not exactly sure of what you're looking for.
-
-  I have left several `:help X` comments throughout the init.lua
-    These are hints about where to find more information about the relevant settings,
-    plugins or Neovim features used in Kickstart.
-
-   NOTE: Look for lines like this
-
-    Throughout the file. These are for you, the reader, to help you understand what is happening.
-    Feel free to delete them once you know what you're doing, but they should serve as a guide
-    for when you are first encountering a few different constructs in your Neovim config.
-
-If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
-
-I hope you enjoy your Neovim journey,
-- TJ
---]]
-
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -554,8 +526,6 @@ require('lazy').setup({
 
       -- LSPs and clients are able to communicate to each other what features they support.
       --  By default, Neovim doesn't support everything that is in the LSP specification.
-      --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
-      --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
       --
       -- Language servers can broadly be installed in the following ways:
       --  1) via the mason package manager; or
@@ -578,12 +548,74 @@ require('lazy').setup({
             intelephense = {
               -- Setting stubs replaces the server defaults, so this is its default list plus wordpress.
               stubs = {
-                'apache', 'bcmath', 'bz2', 'calendar', 'com_dotnet', 'Core', 'ctype', 'curl', 'date', 'dba', 'dom', 'enchant',
-                'exif', 'fileinfo', 'filter', 'fpm', 'ftp', 'gd', 'hash', 'iconv', 'imap', 'intl', 'json', 'ldap', 'libxml',
-                'mbstring', 'mcrypt', 'mssql', 'mysqli', 'oci8', 'odbc', 'openssl', 'pcntl', 'pcre', 'PDO', 'pgsql', 'Phar',
-                'posix', 'pspell', 'random', 'readline', 'Reflection', 'regex', 'session', 'shmop', 'SimpleXML', 'snmp', 'soap',
-                'sockets', 'sodium', 'SPL', 'sqlite3', 'standard', 'superglobals', 'sybase', 'sysvmsg', 'sysvsem', 'sysvshm',
-                'tidy', 'tokenizer', 'uri', 'xml', 'xmlreader', 'xmlrpc', 'xmlwriter', 'Zend OPcache', 'zip', 'zlib',
+                'apache',
+                'bcmath',
+                'bz2',
+                'calendar',
+                'com_dotnet',
+                'Core',
+                'ctype',
+                'curl',
+                'date',
+                'dba',
+                'dom',
+                'enchant',
+                'exif',
+                'fileinfo',
+                'filter',
+                'fpm',
+                'ftp',
+                'gd',
+                'hash',
+                'iconv',
+                'imap',
+                'intl',
+                'json',
+                'ldap',
+                'libxml',
+                'mbstring',
+                'mcrypt',
+                'mssql',
+                'mysqli',
+                'oci8',
+                'odbc',
+                'openssl',
+                'pcntl',
+                'pcre',
+                'PDO',
+                'pgsql',
+                'Phar',
+                'posix',
+                'pspell',
+                'random',
+                'readline',
+                'Reflection',
+                'regex',
+                'session',
+                'shmop',
+                'SimpleXML',
+                'snmp',
+                'soap',
+                'sockets',
+                'sodium',
+                'SPL',
+                'sqlite3',
+                'standard',
+                'superglobals',
+                'sybase',
+                'sysvmsg',
+                'sysvsem',
+                'sysvshm',
+                'tidy',
+                'tokenizer',
+                'uri',
+                'xml',
+                'xmlreader',
+                'xmlrpc',
+                'xmlwriter',
+                'Zend OPcache',
+                'zip',
+                'zlib',
                 'wordpress',
               },
               -- WP-CLI stubs are not bundled. Install or update them with:
@@ -699,99 +731,6 @@ require('lazy').setup({
         typescript = { 'deno_fmt' },
         -- You can use 'stop_after_first' to run the first available formatter from the list
       },
-    },
-  },
-
-  { -- Autocompletion
-    'saghen/blink.cmp',
-    event = 'VimEnter',
-    version = '1.*',
-    dependencies = {
-      -- Snippet Engine
-      {
-        'L3MON4D3/LuaSnip',
-        version = '2.*',
-        build = (function()
-          -- Build Step is needed for regex support in snippets.
-          -- This step is not supported in many windows environments.
-          -- Remove the below condition to re-enable on windows.
-          if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then return end
-          return 'make install_jsregexp'
-        end)(),
-        dependencies = {
-          -- `friendly-snippets` contains a variety of premade snippets.
-          --    See the README about individual language/framework/plugin snippets:
-          --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
-        },
-        opts = {},
-      },
-    },
-    ---@module 'blink.cmp'
-    ---@type blink.cmp.Config
-    opts = {
-      keymap = {
-        -- 'default' (recommended) for mappings similar to built-in completions
-        --   <c-y> to accept ([y]es) the completion.
-        --    This will auto-import if your LSP supports it.
-        --    This will expand snippets if the LSP sent a snippet.
-        -- 'super-tab' for tab to accept
-        -- 'enter' for enter to accept
-        -- 'none' for no mappings
-        --
-        -- For an understanding of why the 'default' preset is recommended,
-        -- you will need to read `:help ins-completion`
-        --
-        -- No, but seriously. Please read `:help ins-completion`, it is really good!
-        --
-        -- All presets have the following mappings:
-        -- <tab>/<s-tab>: move to right/left of your snippet expansion
-        -- <c-space>: Open menu or open docs if already open
-        -- <c-n>/<c-p> or <up>/<down>: Select next/previous item
-        -- <c-e>: Hide menu
-        -- <c-k>: Toggle signature help
-        --
-        -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'default',
-
-        -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
-        --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
-      },
-
-      appearance = {
-        -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
-        -- Adjusts spacing to ensure icons are aligned
-        nerd_font_variant = 'mono',
-      },
-
-      completion = {
-        -- By default, you may press `<c-space>` to show the documentation.
-        -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
-      },
-
-      sources = {
-        default = { 'lsp', 'path', 'snippets' },
-      },
-
-      snippets = { preset = 'luasnip' },
-
-      -- Blink.cmp includes an optional, recommended rust fuzzy matcher,
-      -- which automatically downloads a prebuilt binary when enabled.
-      --
-      -- By default, we use the Lua implementation instead, but you may enable
-      -- the rust implementation via `'prefer_rust_with_warning'`
-      --
-      -- See :h blink-cmp-config-fuzzy for more information
-      fuzzy = { implementation = 'lua' },
-
-      -- Shows a signature help window while you type arguments for a function
-      signature = { enabled = true },
     },
   },
   {
@@ -958,7 +897,8 @@ require('lazy').setup({
   },
   {
     'S1M0N38/love2d.nvim',
-    event = 'VeryLazy',
+    cond = vim.fn.executable 'love' == 1,
+    ft = 'lua',
     version = '2.*',
     opts = {},
     keys = {
@@ -985,14 +925,6 @@ require('lazy').setup({
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
-    opts = {},
-  },
-  {
-    'quarto-dev/quarto-nvim',
-    dependencies = {
-      'jmbuhr/otter.nvim',
-      'nvim-treesitter/nvim-treesitter',
-    },
     opts = {},
   },
 
@@ -1034,10 +966,6 @@ require('lazy').setup({
   },
 })
 
-local quarto = require 'quarto'
-quarto.setup()
-vim.keymap.set('n', '<leader>qp', quarto.quartoPreview, { silent = true, noremap = true })
-
 local neogit = require 'neogit'
 vim.keymap.set('n', '<leader>ng', function() neogit.open() end, { desc = 'Open neogit' })
 
@@ -1059,15 +987,6 @@ vim.opt['expandtab'] = true
 --    vim.bo['softtabstop'] = 2
 --  end,
 --})
-vim.api.nvim_create_autocmd('BufEnter', {
-  pattern = '*.gd',
-  callback = function()
-    vim.bo.tabstop = 4
-    vim.bo.softtabstop = 4
-    vim.bo.shiftwidth = 4
-    vim.bo.expandtab = true
-  end,
-})
---
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
